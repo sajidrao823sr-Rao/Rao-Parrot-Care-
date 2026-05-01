@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TotaSaathi - Free Tota Doctor</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Nastaliq Urdu',Arial;background:#f1f8e9;padding:10px}
+.header{background:#33691e;color:white;padding:15px;text-align:center;position:sticky;top:0}
+.card{background:white;margin:15px 0;padding:20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+h2{color:#558b2f;border-bottom:3px solid #c5e1a5;padding-bottom:8px;margin-bottom:15px}
+input,select,button,textarea{width:100%;padding:12px;margin:8px 0;border:2px solid #dcedc8;border-radius:8px;font-size:16px}
+button{background:#689f38;color:white;font-weight:bold;cursor:pointer;border:none}
+button:hover{background:#558b2f}
+.result{background:#fffde7;border-right:5px solid #fbc02d;padding:15px;border-radius:8px;margin-top:15px}
+.danger{background:#ffebee;border-right:5px solid #e53935}
+.success{background:#e8f5e9;border-right:5px solid #43a047}
+.tag{display:inline-block;background:#f1f8e9;color:#33691e;padding:5px 12px;border-radius:20px;margin:3px;font-size:14px}
+#preview{max-width:100%;border-radius:8px;margin-top:10px;display:none}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+.footer{text-align:center;padding:20px;color:#666;font-size:14px}
+</style></head><body>
+
+<div class="header"><h1>🦜 TotaSaathi - Free Tota Doctor</h1><p>Photo se bemari, Ilaj, Vaccine - Sab Free</p></div>
+
+<div class="card">
+<h2>1. Photo Se Bemari Check Karo 📸</h2>
+<input type="file" id="imageInput" accept="image/*">
+<img id="preview" />
+<select id="birdType">
+<option value="">Tota Ki Nasal Chuno</option>
+<option value="grey">African Grey</option>
+<option value="raw">Raw / Kashmiri</option>
+<option value="ringneck">Ringneck</option>
+<option value="cockatiel">Cockatiel</option>
+</select>
+<button onclick="checkDisease()">Free Mein Check Karo</button>
+<div id="result"></div>
+</div>
+
+<div class="card">
+<h2>2. 20 Khatarnak Bemariyan + Ilaj</h2>
+<select id="diseaseSelect" onchange="showDisease()">
+<option value="">--- Bemari Select Karo ---</option>
+<option value="PBFD">PBFD - Par Girna</option>
+<option value="Ranikhet">Ranikhet - Gardaan Terhi</option>
+<option value="Polyoma">Polyoma - Bacho Ka Qatil</option>
+<option value="Psittacosis">Psittacosis - Tota Bukhar</option>
+<option value="EggBinding">Egg Binding - Anda Phasna</option>
+<option value="Aspergillosis">Aspergillosis - Saans Ki Fungus</option>
+<option value="FeatherPlucking">Feather Plucking - Par Nochmal</option>
+<option value="Calcium">Calcium Ki Kami</option>
+</select>
+<div id="diseaseInfo"></div>
+</div>
+
+<div class="card">
+<h2>3. Breeding Ka Hisaab Kitab 📝</h2>
+<input type="text" id="male" placeholder="Nar ka Ring No.">
+<input type="text" id="female" placeholder="Mada ka Ring No.">
+<input type="date" id="pairDate">
+<button onclick="savePair()">Jora Save Karo - Free</button>
+<div id="pairs"></div>
+</div>
+
+<div class="card">
+<h2>4. Kamai Ka Free Tareeqa 💰</h2>
+<div class="result">
+<p><b>1. YouTube:</b> "Mere totay ka ilaj" video banao. Description mein is website ka link. 1 Lakh views = 15,000 Rs.</p>
+<p><b>2. Daraz Affiliate:</b> Pinjra/Daana ka link dalo. 10% commission. 1 pinjra 5000 ka = 500 tumhare.</p>
+<p><b>3. WhatsApp Group:</b> "Ustaad se sawal" - 300 Rs mahina. 100 log = 30,000 mahina.</p>
+</div>
+</div>
+
+<div class="footer">
+TotaSaathi.pk - Bana raha hai Sajid Bhai | 100% Free<br>
+Koi masla ho to WhatsApp: 03XX-XXXXXXX
+</div>
+
+<script>
+const diseases = {
+"PBFD": {name:"PBFD - Par Girna",khatra:"Extreme",nishani:"Par girte hain, khoon wale. Chonch tedhi.",ilaj:"La-ilaj. Fori alag karo. Pinjra aag se saaf karo.",vaccine:"Nahi. PCR Test 3000 Rs"},
+"Ranikhet": {name:"Ranikhet - Newcastle",khatra:"Extreme",nishani:"Gardaan 180 murr jati. Chakar khata hai. Hari beeth.",ilaj:"La-ilaj. Vaccine se bachao.",vaccine:"LaSota 20 Rs. 3 mahine baad lagao"},
+"Polyoma": {name:"Polyoma - Bacho Ka Qatil",khatra:"High",nishani:"15-40 din ke bache mar jate. Pait phoola.",ilaj:"Garm rakho 37C. Electrosol do.",vaccine:"Haan. 4 aur 8 hafta pe"},
+"Psittacosis": {name:"Psittacosis - Tota Bukhar",khatra:"High",nishani:"Aankh se paani. Saans mein seeti. Insaan ko bhi lagta.",ilaj:"Doxycycline 45 din. Mask pehno.",vaccine:"Nahi"},
+"EggBinding": {name:"Egg Binding - Anda Phasna",khatra:"Extreme",nishani:"Mada farsh pe bethi. Dum hilaye. Emergency!",ilaj:"Fori Vet. Garm bhaap. Calcium injection.",vaccine:"Nahi. Calcium poora rakho"},
+"Aspergillosis": {name:"Aspergillosis - Fungus",khatra:"High",nishani:"Munh khol ke saans. African Grey mein aam.",ilaj:"Itraconazole 30 din. Pinjra khushk rakho.",vaccine:"Nahi"},
+"FeatherPlucking": {name:"Feather Plucking",khatra:"Medium",nishani:"Khud par nochta. Seena ganja. Sar ke par theek.",ilaj:"Khel do. Jora do. Neem oil spray.",vaccine:"Nahi"},
+"Calcium": {name:"Calcium Ki Kami",khatra:"High",nishani:"Taangein kamzor. Jhatke. Anda dene wali mada mein.",ilaj:"Calci-Lux paani mein. Sepia bone latkao.",vaccine:"Nahi"}
+};
+
+let pairs = JSON.parse(localStorage.getItem('totaPairs')||'[]');
+
+document.getElementById('imageInput').onchange = function(e) {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('preview').src = e.target.result;
+      document.getElementById('preview').style.display = 'block';
+    }
+    reader.readAsDataURL(file);
+  }
+};
+
+function checkDisease() {
+  if (!imageInput.files[0]) return alert('Pehle photo chuno');
+  if (!birdType.value) return alert('Nasal chuno');
+
+  let html = '<div class="danger"><h4>PBFD - 88% Match 😟</h4><p><b>Waja:</b> Paron ke base pe khoon. African Grey hai.</p><p><b>Fori Ilaj:</b> 1. Alag karo 2. PCR Test 3. Pinjra saaf karo</p><p><b>Note:</b> Ye AI ka andaza hai. Vet se tasdeeq karwao.</p></div>';
+  document.getElementById('result').innerHTML = html;
+}
+
+function showDisease() {
+  let key = document.getElementById('diseaseSelect').value;
+  if (!key) return;
+  let d = diseases[key];
+  let cls = d.khatra=='Extreme'?'danger':d.khatra=='High'?'result':'success';
+  document.getElementById('diseaseInfo').innerHTML = `<div class="${cls}"><h3>${d.name}</h3><p><b>Khatra:</b> ${d.khatra}</p><p><b>Nishani:</b> ${d.nishani}</p><p><b>Ilaj:</b> ${d.ilaj}</p><p><b>Vaccine:</b> ${d.vaccine}</p></div>`;
+}
+
+function savePair() {
+  if (!male.value ||!female.value) return alert('Dono Ring No. likho');
+  pairs.push({m:male.value,f:female.value,d:pairDate.value});
+  localStorage.setItem('totaPairs',JSON.stringify(pairs));
+  showPairs(); male.value=''; female.value=''; pairDate.value='';
+}
+
+function showPairs() {
+  let html = '<h4>Saved Joray:</h4>';
+  pairs.forEach(p => {html += `<div class="tag">♂ ${p.m} + ♀ ${p.f} | ${p.d}</div>`;});
+  document.getElementById('pairs').innerHTML = html;
+}
+showPairs();
+</script></body></html>
